@@ -1,30 +1,23 @@
 import ReactDOM from "react-dom/client";
-import "animate.css";
-
 import bootstrap from "./bootstrap";
-import { HashRouter, Route, Routes } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
+import LyricWindowPage from "../pages";
+import { useEffect } from "react";
 
-import "@/common/i18n";
-
+import "animate.css";
 import "rc-slider/assets/index.css";
 import "react-toastify/dist/ReactToastify.css";
 import "./index.css"; // 全局样式
 import "./index.scss";
-import { toastDuration } from "@/common/constant";
-import useBootstrap from "./useBootstrap";
-import LyricWindowPage from "../pages";
+import WindowDrag from "@shared/window-drag/renderer";
 
 bootstrap().then(() => {
   ReactDOM.createRoot(document.getElementById("root")).render(<Root></Root>);
 });
 
 function Root() {
+  useEffect(() => {
+    WindowDrag.injectHandler();
+  }, []);
+
   return <LyricWindowPage></LyricWindowPage>;
 }
-
-// function BootstrapComponent(): null {
-//   useBootstrap();
-
-//   return null;
-// }

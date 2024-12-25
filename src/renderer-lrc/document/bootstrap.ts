@@ -1,19 +1,9 @@
-import { ipcRendererOn, ipcRendererSend } from "@/common/ipc-util/renderer";
-import currentLyricStore from "../store/current-lyric-store";
-import rendererAppConfig from "@/common/app-config/renderer";
-
+import AppConfig from "@shared/app-config/renderer";
+import messageBus from "@shared/message-bus/renderer/extension";
 
 export default async function () {
-  // let prevTimestamp = 0;
-
-  ipcRendererOn('sync-extension-data', (data) => {
-    currentLyricStore.setValue(prev => ({
-      ...prev,
-      ...(data.data)
-    }))
-  })
-  await rendererAppConfig.setupRendererAppConfig();
-
-  ipcRendererSend('extension-inited');
+    // let prevTimestamp = 0;
+    await AppConfig.setup()
+    messageBus.subscribeAppState(["playerState", "musicItem", "repeatMode", "parsedLrc", "lyricText", "fullLyric", "progress"]);
+    messageBus.sendCommand("SyncAppState");
 }
-

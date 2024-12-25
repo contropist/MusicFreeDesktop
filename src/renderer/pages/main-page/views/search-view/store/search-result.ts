@@ -25,18 +25,18 @@ export const initSearchResults: ISearchResults = {
   music: {},
   album: {},
   artist: {},
-  sheet: {}
-  // lyric: {}
+  sheet: {},
+  lyric: {}
 };
 
 /** key: pluginhash value: searchResult */
 const searchResultsStore = new Store(initSearchResults);
 
-const currentMediaTypeStore = new Store<IMedia.SupportMediaType>('music');
+const currentMediaTypeStore = new Store<IMedia.SupportMediaType>("music");
 
 export { searchResultsStore, currentMediaTypeStore };
 
 export function resetStore(){
-  currentMediaTypeStore.setValue('music');
+  currentMediaTypeStore.setValue("music");
   searchResultsStore.setValue(initSearchResults);
 }

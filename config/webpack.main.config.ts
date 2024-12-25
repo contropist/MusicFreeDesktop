@@ -10,20 +10,22 @@ export const mainConfig: Configuration = {
    */
   entry: {
     index: "./src/main/index.ts",
-    "scanner.worker": "./src/main/core/local-music-manager/scanner.worker.ts",
   },
   // Put your normal webpack config below here
   module: {
     rules,
   },
   resolve: {
-    extensions: [".js", ".ts", ".jsx", ".tsx", ".css", ".json"],
+    extensions: [".js", ".ts", ".jsx", ".tsx", ".css", ".json", '.node'],
     alias: {
       "@": path.join(__dirname, "../src"),
       "@main": path.join(__dirname, "../src/main"),
+      "@native": path.join(__dirname, "../src/main/native_modules"),
+      "@shared": path.join(__dirname, "../src/shared")
     },
   },
   output: {
     filename: "[name].js",
   },
+  externals: ['sharp']
 };

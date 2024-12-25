@@ -1,8 +1,7 @@
 import type { ForgeConfig } from "@electron-forge/shared-types";
-import { MakerSquirrel } from "@electron-forge/maker-squirrel";
 import { MakerZIP } from "@electron-forge/maker-zip";
 import { MakerDeb } from "@electron-forge/maker-deb";
-import { MakerRpm } from "@electron-forge/maker-rpm";
+import { MakerDMG } from "@electron-forge/maker-dmg";
 import { WebpackPlugin } from "@electron-forge/plugin-webpack";
 
 import { mainConfig } from "./config/webpack.main.config";
@@ -14,9 +13,12 @@ const config: ForgeConfig = {
     appBundleId: "fun.upup.musicfree",
     icon: path.resolve(__dirname, "res/logo"),
     executableName: "MusicFree",
-    extraResource: [
-      path.resolve(__dirname, 'res'),
-      
+    extraResource: [path.resolve(__dirname, "res")],
+    protocols: [
+      {
+        name: "MusicFree",
+        schemes: ["musicfree"],
+      },
     ],
   },
   rebuildConfig: {},
@@ -27,8 +29,21 @@ const config: ForgeConfig = {
     //   setupMsi: "MusicFreeInstaller",
     // }),
     new MakerZIP({}, ["darwin"]),
-    new MakerRpm({}),
-    new MakerDeb({}),
+    new MakerDMG(
+      {
+        // background
+        format: "ULFO",
+      },
+      ["darwin"]
+    ),
+    // new MakerRpm({}),
+    new MakerDeb({
+      options: {
+        name: "MusicFree",
+        bin: "MusicFree",
+        mimeType: ["x-scheme-handler/musicfree"],
+      },
+    }),
   ],
   plugins: [
     new WebpackPlugin({
@@ -50,12 +65,43 @@ const config: ForgeConfig = {
             js: "./src/renderer-lrc/document/index.tsx",
             name: "lrc_window",
             preload: {
-              js: "./src/preload/index.ts",
+              js: "./src/preload/extension.ts",
             },
           },
+          {
+            html: "./src/renderer-minimode/document/index.html",
+            js: "./src/renderer-minimode/document/index.tsx",
+            name: "minimode_window",
+            preload: {
+              js: "./src/preload/extension.ts",
+            },
+          },
+          /** webworkers */
+          {
+            js: "./src/webworkers/downloader.ts",
+            name: "worker_downloader",
+            nodeIntegration: true,
+          },
+          {
+            js: "./src/webworkers/local-file-watcher.ts",
+            name: "local_file_watcher",
+            nodeIntegration: true,
+          },
+          {
+            js: "./src/webworkers/db-worker.ts",
+            name: "db",
+            nodeIntegration: true,
+          }
         ],
       },
     }),
+    {
+      name: "@timfish/forge-externals-plugin",
+      config: {
+        externals: ["sharp"],
+        includeDeps: true,
+      },
+    },
   ],
 };
 

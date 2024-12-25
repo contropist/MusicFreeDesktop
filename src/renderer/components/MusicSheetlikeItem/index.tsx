@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import SvgAsset from "../SvgAsset";
 import { normalizeNumber } from "@/common/normalize-util";
 import { memo } from "react";
+import { isCN } from "@/shared/i18n/renderer";
 
 interface IMusicSheetlikeItemProps {
   mediaItem: IMusic.IMusicSheetItem;
@@ -27,6 +28,7 @@ function MusicSheetlikeItem(props: IMusicSheetlikeItemProps) {
         <img
           src={mediaItem?.artwork || mediaItem?.coverImg || albumImg}
           onError={setFallbackAlbum}
+          loading='lazy'
         ></img>
         <Condition
           condition={
@@ -42,7 +44,7 @@ function MusicSheetlikeItem(props: IMusicSheetlikeItemProps) {
             <div className="play-count">
               <Condition condition={mediaItem?.playCount}>
                 <SvgAsset iconName={"headphone"} size={14}></SvgAsset>
-                {normalizeNumber(mediaItem?.playCount)}
+                {normalizeNumber(mediaItem?.playCount, !isCN())}
               </Condition>
             </div>
           </div>

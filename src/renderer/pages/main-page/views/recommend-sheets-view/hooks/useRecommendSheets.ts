@@ -1,9 +1,9 @@
 import { RequestStateCode } from "@/common/constant";
 import { resetMediaItem } from "@/common/media-util";
-import { callPluginDelegateMethod } from "@/renderer/core/plugin-delegate";
 import { useCallback, useEffect, useRef, useState } from "react";
+import PluginManager from "@shared/plugin-manager/renderer";
 
-export default function (plugin: IPlugin.IPluginDelegate, tag: IMedia.IUnique) {
+export default function (plugin: IPlugin.IPluginDelegate, tag: IMedia.IUnique | null) {
   const [sheets, setSheets] = useState<IMusic.IMusicSheetItem[]>([]);
   const [status, setStatus] = useState<RequestStateCode>(RequestStateCode.IDLE);
   const currentTagRef = useRef<string>();
@@ -29,7 +29,7 @@ export default function (plugin: IPlugin.IPluginDelegate, tag: IMedia.IUnique) {
         ? RequestStateCode.PENDING_FIRST_PAGE
         : RequestStateCode.PENDING_REST_PAGE
     );
-    const res = await callPluginDelegateMethod(
+    const res = await PluginManager.callPluginDelegateMethod(
       plugin,
       "getRecommendSheetsByTag",
       tag,
@@ -51,7 +51,9 @@ export default function (plugin: IPlugin.IPluginDelegate, tag: IMedia.IUnique) {
   }, [tag, status]);
 
   useEffect(() => {
-    query();
+    if (tag) {
+      query();
+    }
   }, [tag]);
 
   return [query, sheets, status] as const;
